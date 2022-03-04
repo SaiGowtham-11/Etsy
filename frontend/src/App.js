@@ -1,8 +1,33 @@
-function App() {
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import { Container } from 'react-bootstrap'
+import Header from './components/Header'
+import Footer from './components/Footer'
+import HomeScreen from './screens/HomeScreen'
+import ProductScreen from './screens/ProductScreen'
+import SignUpScreen from './screens/SignUpScreen'
+import LoginScreen from './screens/LoginScreen'
+import CartScreen from './screens/CartScreen'
+
+const App = () => {
   return (
-    <div className='App'>
-      <h1>Hello World</h1>
-    </div>
+    <Router>
+      <Header />
+      <main>
+        <Container className='EntryMessage'>
+          <Routes>
+            <Route path='/' element={<HomeScreen />} exact />
+            <Route path='/product/:id' element={<ProductScreen />} />
+            <Route path='/signup' element={<SignUpScreen />} />
+            <Route path='/login' element={<LoginScreen />} />
+            <Route path='/cart'>
+              <Route path=':id' element={<CartScreen />} />
+              <Route path='' element={<CartScreen />} />
+            </Route>
+          </Routes>
+        </Container>
+      </main>
+      <Footer />
+    </Router>
   )
 }
 
