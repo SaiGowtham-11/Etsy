@@ -1,12 +1,14 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import { Container } from 'react-bootstrap'
 import Header from './components/Header'
-import Footer from './components/Footer'
+
 import HomeScreen from './screens/HomeScreen'
 import ProductScreen from './screens/ProductScreen'
 import SignUpScreen from './screens/SignUpScreen'
 import LoginScreen from './screens/LoginScreen'
 import CartScreen from './screens/CartScreen'
+import ProfileScreen from './screens/ProfileScreen'
+import ShippingScreen from './screens/ShippingScreen'
 
 const App = () => {
   return (
@@ -15,6 +17,7 @@ const App = () => {
       <main>
         <Container className='EntryMessage'>
           <Routes>
+            <Route path='/shipping' element={<ShippingScreen />} />
             <Route path='/' element={<HomeScreen />} exact />
             <Route path='/product/:id' element={<ProductScreen />} />
             <Route path='/signup' element={<SignUpScreen />} />
@@ -23,10 +26,10 @@ const App = () => {
               <Route path=':id' element={<CartScreen />} />
               <Route path='' element={<CartScreen />} />
             </Route>
+            <Route path='/profile' element={<ProfileScreen />} />
           </Routes>
         </Container>
       </main>
-      <Footer />
     </Router>
   )
 }

@@ -15,15 +15,19 @@ import Message from '../components/Message'
 import { addToCart, removeFromCart } from '../actions/cartActions'
 import { useNavigate } from 'react-router'
 
-const CartScreen = ({ location, history }) => {
+const CartScreen = () => {
+  const location = useLocation()
+  const navigate = useNavigate()
   const { id: productId } = useParams()
-  console.log(location)
+  console.log(productId)
   const qty = location.search ? Number(location.search.split('=')[1]) : 1
-
   const dispatch = useDispatch()
 
   const cart = useSelector((state) => state.cart)
   const { cartItems } = cart
+
+  const userLogin = useSelector((state) => state.userLogin)
+  const { loading, error, userInfo } = userLogin
 
   useEffect(() => {
     if (productId) {
@@ -32,12 +36,24 @@ const CartScreen = ({ location, history }) => {
   }, [dispatch, productId, qty])
 
   const removeFromCartHandler = (id) => {
-    console.log(id)
     dispatch(removeFromCart(id))
   }
 
   const checkoutHandler = () => {
-    history.push('/login?redirect=shipping')
+    if (userInfo) {
+      if (
+        userInfo.userStreet === null ||
+        userInfo.userCity === null ||
+        userInfo.userCountry === null ||
+        userInfo.userZipCode === null
+      ) {
+        navigate('/profile')
+      } else {
+        navigate('/shipping')
+      }
+    } else {
+      navigate('/login')
+    }
   }
 
   return (

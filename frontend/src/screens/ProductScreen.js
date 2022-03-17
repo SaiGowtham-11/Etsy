@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router'
+
 import {
   Row,
   Col,
@@ -30,8 +30,8 @@ const ProductScreen = () => {
     dispatch(listProductDetails(params.id))
   }, [dispatch])
 
-  const addToCartHandler = ({ history }) => {
-    history.push(`/cart/${params.id}?qty=${qty}`)
+  const addToCartHandler = () => {
+    navigate(`/cart/${params.id}?qty=${qty}`)
   }
 
   return (

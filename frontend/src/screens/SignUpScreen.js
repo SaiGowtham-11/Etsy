@@ -1,6 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import { useDispatch, useSelector } from 'react-redux'
+import Message from '../components/Message'
+import Loader from '../components/Loader'
+import { useNavigate } from 'react-router'
 import Axios from 'axios'
+import { register } from '../actions/userActions'
 import {
   Row,
   Col,
@@ -15,99 +21,108 @@ import {
 import { Container } from 'react-bootstrap'
 
 const SignUpScreen = () => {
-  const [nameErr, setNameErr] = useState({})
-  const [emailErr, setEmailErr] = useState({})
-  const [passwordErr, setPasswordErr] = useState({})
-
+  const location = useLocation()
   const [userName, setName] = useState('')
   const [userEmailID, setEmail] = useState('')
   const [userPassword, setPassword] = useState('')
-  const [message, setMessage] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [message, setMessage] = useState(null)
+  const redirect = location.search ? location.search.split('=')[1] : '/'
 
-  const customerSignup = async (e) => {
+  const userRegister = useSelector((state) => state.userRegister)
+  const { loading, error, userInfo } = userRegister
+
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (userInfo) {
+      navigate(redirect)
+    }
+  }, [navigate, userInfo, redirect])
+
+  const submitHandler = (e) => {
     e.preventDefault()
-    const isValid = true // Need to update the value
-    if (isValid) {
-      try {
-        const response = await Axios.post(`/api/users/UserSignup`, {
-          userName: userName,
-          userEmailID: userEmailID,
-          userPassword: userPassword,
-        })
-        setMessage(JSON.stringify(response.data.message))
-        console.log({ message })
-        // if (message.localeCompare('Sign up Sucessfull') == 0) { // take care of this condition
-        alert('Sign Up Sucessfull')
-        window.open('/LoginScreen', '_self')
-        //}
-        //console.log(JSON.stringify(response.data.message))
-      } catch (err) {
-        console.log(err)
-      }
+    if (userPassword !== confirmPassword) {
+      setMessage('Passwords do not match')
+    } else {
+      dispatch(register(userName, userEmailID, userPassword))
     }
   }
 
   return (
     <div>
-      <h1 className='form-floating'>User Signup</h1>
-      <div className='form-floating'>
-        <input
-          type='text'
-          className='form-control'
-          id='floatingName'
-          placeholder='John Doe'
-          name='userName'
-          onChange={(e) => {
-            setName(e.target.value)
-          }}
-        />
-        <label htmlFor='floatingName'>Name</label>
-        {Object.keys(nameErr).map((key) => {
-          return <div style={{ color: 'red' }}>{nameErr[key]}</div>
-        })}
+      <div className='login-container'>
+        <div className='logo'></div>
       </div>
-      <div className='form-floating form-floating-sm '>
-        <input
-          type='email'
-          className='form-control'
-          id='floatingInput'
-          placeholder='name@example.com'
-          name='userEmailID'
-          onChange={(e) => {
-            setEmail(e.target.value)
-          }}
-        />
-        <label htmlFor='floatingInput'>Email address</label>
-        {Object.keys(emailErr).map((key) => {
-          return <div style={{ color: 'red' }}>{emailErr[key]}</div>
-        })}
+      <div className='row'>
+        <div className='col-md-4'></div>
+        <div className='col-md-4'>
+          <h2>Lets get Started</h2>
+        </div>
       </div>
-      <div className='form-floating form-floating-sm'>
-        <input
-          type='password'
-          className='form-control'
-          id='floatingPassword'
-          placeholder='Password'
-          name='userPassword'
-          onChange={(e) => {
-            setPassword(e.target.value)
-          }}
-        />
-        <label htmlFor='floatingPassword'>Password</label>
-        {Object.keys(passwordErr).map((key) => {
-          return <div style={{ color: 'red' }}>{passwordErr[key]}</div>
-        })}
+
+      <div className='row'>
+        <div className='col-md-4'></div>
+        <div className='col-md-6'>
+          <form className='form-center' onSubmit={submitHandler}>
+            <div className='form-group'>
+              {message && <Message variant='danger'> {message}</Message>}
+              {error && <Message variant='danger'> {error}</Message>}
+              <input
+                type='userName'
+                className='form-control pad'
+                name='username'
+                value={userName}
+                onChange={(e) => setName(e.target.value)}
+                required
+                placeholder='Enter username'
+              ></input>
+              <input
+                type='email'
+                className='form-control pad'
+                name='email'
+                value={userEmailID}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                placeholder='Enter Your Email'
+              ></input>
+              <input
+                type='password'
+                name='password'
+                className='form-control pad'
+                value={userPassword}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder='Password'
+              ></input>
+              <input
+                type='password'
+                name='confirmPassword'
+                className='form-control pad'
+                value={confirmPassword}
+                required
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder='Confirm Password'
+              ></input>
+              <div class='d-grid gap-2'>
+                <button class='btn btn-secondary' type='submit'>
+                  Register
+                </button>
+              </div>
+              <p>
+                {' '}
+                Have an Account?{' '}
+                <span>
+                  <Link to='/login'>
+                    <a>Login</a>
+                  </Link>
+                </span>{' '}
+              </p>
+            </div>
+          </form>
+        </div>
       </div>
-      <div className='d-grid gap-2 form-floating form-floating-sm'>
-        <button
-          onClick={customerSignup}
-          type='button'
-          className='btn btn-outline-primary'
-        >
-          SUBMIT
-        </button>
-      </div>
-      <div>{message}</div>
     </div>
   )
 }

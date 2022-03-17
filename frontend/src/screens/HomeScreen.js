@@ -6,6 +6,7 @@ import Product from '../components/Product'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
 import { listProducts } from '../actions/productActions'
+import Footer from '../components/Footer'
 
 const HomeScreen = () => {
   const dispatch = useDispatch()
@@ -33,6 +34,7 @@ const HomeScreen = () => {
             ))}
         </Row>
       )}
+      <Footer />
     </>
   )
 }

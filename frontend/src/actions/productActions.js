@@ -38,7 +38,10 @@ export const listProductDetails = (id) => async (dispatch) => {
     // Need to change
     dispatch({
       type: PRODUCT_DETAILS_FAIL,
-      payload: error.message,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
     })
   }
 }

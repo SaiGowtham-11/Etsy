@@ -6,10 +6,14 @@ const {
   addUser,
   test,
   getUserProfile,
+  updateUserProfile,
 } = require('../controllers/userController')
 
 router.post('/UserSignup', addUser)
 router.post('/UserLogin', test)
-router.route('/profile').get(protect, getUserProfile)
+router
+  .route('/profile')
+  .get(protect, getUserProfile)
+  .put(protect, updateUserProfile)
 
 module.exports = router

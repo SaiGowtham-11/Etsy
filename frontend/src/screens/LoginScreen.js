@@ -8,8 +8,8 @@ import { useNavigate } from 'react-router'
 import { login } from '../actions/userActions'
 import Axios from 'axios'
 
-const LoginScreen = ({ location, history }) => {
-  //const location = useLocation()
+const LoginScreen = ({}) => {
+  const location = useLocation()
   const [userEmailID, setEmail] = useState('')
   const [userPassword, setPassword] = useState('')
   const redirect = location.search ? location.search.split('=')[1] : '/'
@@ -21,36 +21,14 @@ const LoginScreen = ({ location, history }) => {
 
   useEffect(() => {
     if (userInfo) {
-      history.push(redirect)
+      navigate(redirect)
     }
-  }, [history, userInfo, redirect])
+  }, [navigate, userInfo, redirect])
 
   const submitHandler = (e) => {
     e.preventDefault()
+    e.stopPropagation()
     dispatch(login(userEmailID, userPassword))
-  }
-
-  const customerSignup = async (e) => {
-    // e.preventDefault()
-    // const isValid = true // Need to update the value
-    // if (isValid) {
-    //   try {
-    //     const response = await Axios.post(`/api/users/UserLogin`, {
-    //       userEmailID: userEmailID,
-    //       userPassword: userPassword,
-    //     })
-    //     setMessage(JSON.stringify(response.data.message))
-    //     console.log('+++++++++++++++++++')
-    //     console.log({ message })
-    //     // if (message.localeCompare('Sign up Sucessfull') == 0) { // take care of this condition
-    //     alert('Sign Up Sucessfull')
-    //     window.open('/LoginScreen', '_self')
-    //     //}
-    //     //console.log(JSON.stringify(response.data.message))
-    //   } catch (err) {
-    //     console.log(err)
-    //   }
-    // }
   }
 
   return (
