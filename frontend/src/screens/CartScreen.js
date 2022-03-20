@@ -14,6 +14,7 @@ import {
 import Message from '../components/Message'
 import { addToCart, removeFromCart } from '../actions/cartActions'
 import { useNavigate } from 'react-router'
+import { createOrder } from '../actions/orderActions'
 
 const CartScreen = () => {
   const location = useLocation()
@@ -26,9 +27,20 @@ const CartScreen = () => {
   const cart = useSelector((state) => state.cart)
   const { cartItems } = cart
 
+  const addDecimals = (num) => {
+    return (Math.round(num * 100) / 100).toFixed(2)
+  }
+
+  cart.itemsPrice = addDecimals(
+    cart.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0)
+  )
+  cart.totalPrice = Number(cart.itemsPrice).toFixed(2)
+
   const userLogin = useSelector((state) => state.userLogin)
   const { loading, error, userInfo } = userLogin
 
+  const orderCreate = useSelector((state) => state.orderCreate)
+  const { order, success, err } = orderCreate
   useEffect(() => {
     if (productId) {
       dispatch(addToCart(productId, qty))
@@ -49,7 +61,17 @@ const CartScreen = () => {
       ) {
         navigate('/profile')
       } else {
-        navigate('/shipping')
+        dispatch(
+          createOrder({
+            items_array: cart.cartItems,
+            orderTotal: cart.totalPrice,
+            orderStatus: 'Success',
+            user_id: userInfo._id,
+            orderDate: Date.now(),
+          })
+        )
+        localStorage.removeItem('cartItems')
+        navigate('/myOrders')
       }
     } else {
       navigate('/login')

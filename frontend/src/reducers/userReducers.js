@@ -12,6 +12,13 @@ import {
   USER_UPDATE_PROFILE_FAIL,
   USER_UPDATE_PROFILE_REQUEST,
   USER_UPDATE_PROFILE_SUCCESS,
+  USER_ADD_FAV_REQUEST,
+  USER_EDIT_FAV_SUCCESS,
+  USER_EDIT_FAV_FAIL,
+  USER_REMOVE_FAV_REQUEST,
+  USER_GET_FAV_REQUEST,
+  USER_GET_FAV_SUCCESS,
+  USER_GET_FAV_FAIL,
 } from '../constants/userConstants'
 
 export const userLoginReducer = (state = {}, action) => {
@@ -62,6 +69,37 @@ export const userUpdateProfileReducer = (state = {}, action) => {
     case USER_UPDATE_PROFILE_SUCCESS:
       return { loading: false, success: true, userInfo: action.payload }
     case USER_UPDATE_PROFILE_FAIL:
+      return { loading: false, error: action.payload }
+    default:
+      return state
+  }
+}
+
+export const userFavouritesReducer = (state = { favourites: [] }, action) => {
+  switch (action.type) {
+    case USER_ADD_FAV_REQUEST:
+      return { ...state, loading: true }
+    case USER_REMOVE_FAV_REQUEST:
+      return { ...state, loading: true }
+    case USER_EDIT_FAV_SUCCESS:
+      return { loading: false, success: true, favourites: action.payload }
+    case USER_EDIT_FAV_FAIL:
+      return { loading: false, error: action.payload }
+    default:
+      return state
+  }
+}
+
+export const userGetFavouritesReducer = (
+  state = { favourites: [] },
+  action
+) => {
+  switch (action.type) {
+    case USER_GET_FAV_REQUEST:
+      return { ...state, loading: true }
+    case USER_GET_FAV_SUCCESS:
+      return { loading: false, success: true, favourites: action.payload }
+    case USER_GET_FAV_FAIL:
       return { loading: false, error: action.payload }
     default:
       return state

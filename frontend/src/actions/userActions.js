@@ -1,8 +1,14 @@
 import axios from 'axios'
 import {
+  USER_ADD_FAV_REQUEST,
   USER_DETAILS_FAIL,
   USER_DETAILS_REQUEST,
   USER_DETAILS_SUCCESS,
+  USER_EDIT_FAV_FAIL,
+  USER_EDIT_FAV_SUCCESS,
+  USER_GET_FAV_FAIL,
+  USER_GET_FAV_REQUEST,
+  USER_GET_FAV_SUCCESS,
   USER_LOGIN_FAIL,
   USER_LOGIN_REQUEST,
   USER_LOGIN_SUCCESS,
@@ -153,6 +159,71 @@ export const getUserDetails = (id) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: USER_DETAILS_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    })
+  }
+}
+
+export const addFavourites = (prod_id) => async (dispatch, getState) => {
+  try {
+    dispatch({
+      type: USER_ADD_FAV_REQUEST,
+    })
+
+    const { userLogin } = getState()
+    const { userInfo } = userLogin
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    }
+    const uri = `/api/users/addfavourite/${userInfo._id}/${prod_id}`
+    const { data } = await axios.get(uri, config)
+    dispatch({
+      type: USER_EDIT_FAV_SUCCESS,
+      payload: data,
+    })
+  } catch (error) {
+    dispatch({
+      type: USER_EDIT_FAV_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    })
+  }
+}
+
+export const getFavourites = () => async (dispatch, getState) => {
+  try {
+    dispatch({
+      type: USER_GET_FAV_REQUEST,
+    })
+
+    const { userLogin } = getState()
+    const { userInfo } = userLogin
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    }
+    const userID = userInfo._id
+    const { data } = await axios.get(
+      `/api/users/getFauvourites/${userID}`,
+      config
+    )
+    dispatch({
+      type: USER_GET_FAV_SUCCESS,
+      payload: data,
+    })
+  } catch (error) {
+    dispatch({
+      type: USER_GET_FAV_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message

@@ -6,7 +6,8 @@ const cors = require('cors')
 const db = require('./dbCon')
 const userRoutes = require('./Routes/userRoutes')
 const productRoutes = require('./Routes/productRoutes')
-
+const orderRoutes = require('./Routes/orderRoutes')
+const shopRoutes = require('./Routes/shopRoutes')
 dotenv.config()
 
 const app = express()
@@ -37,6 +38,8 @@ app.get('/insert', (req, res) => {
 
 app.use('/api/users', userRoutes)
 app.use('/api/products', productRoutes)
+app.use('/api/orders', orderRoutes)
+app.use('/api/shops', shopRoutes)
 
 app.get('/', (req, res) => {
   res.send('API is running....')

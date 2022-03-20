@@ -44,7 +44,6 @@ const LoginScreen = ({}) => {
           <h2>Welcome back</h2>
         </div>
       </div>
-
       <div className='row'>
         <div className='col-md-4'></div>
         <div className='col-md-6'>
@@ -60,7 +59,8 @@ const LoginScreen = ({}) => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder='Enter Your Email'
-              ></input>
+              />
+              <br />
               <input
                 type='password'
                 name='password'
@@ -69,7 +69,8 @@ const LoginScreen = ({}) => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder='Password'
-              ></input>
+              />
+              <br />
               <div class='d-grid gap-2'>
                 <button class='btn btn-secondary' type='submit'>
                   Sign In

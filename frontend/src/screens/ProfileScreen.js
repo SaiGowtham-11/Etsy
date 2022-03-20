@@ -87,7 +87,6 @@ const ProfileScreen = () => {
       userZipCode,
       userAbout,
       userStreet,
-      userGender,
       imageUrl,
     }
     dispatch(updateUserProfile(userobj))
@@ -181,59 +180,6 @@ const ProfileScreen = () => {
                   name='lastName'
                 ></input>
               </div>
-            </div>
-            <h4>Gender</h4>
-            <div class='form-check'>
-              <input
-                class='form-check-input'
-                type='radio'
-                value='Female'
-                onChange={(e) => setuserGender(e.target.value)}
-                name='flexRadioDefault'
-                id='flexRadioDefault1'
-              ></input>
-              <label class='form-check-label' for='flexRadioDefault1'>
-                Female
-              </label>
-            </div>
-            <div class='form-check'>
-              <input
-                class='form-check-input'
-                type='radio'
-                value='Male'
-                onChange={(e) => setuserGender(e.target.value)}
-                name='flexRadioDefault'
-                id='flexRadioDefault1'
-              ></input>
-              <label class='form-check-label' for='flexRadioDefault1'>
-                Male
-              </label>
-            </div>
-            <div class='form-check'>
-              <input
-                class='form-check-input'
-                type='radio'
-                value='Rathernotsay'
-                onChange={(e) => setuserGender(e.target.value)}
-                name='flexRadioDefault'
-                id='flexRadioDefault1'
-              ></input>
-              <label class='form-check-label' for='flexRadioDefault1'>
-                Rather Not Say
-              </label>
-            </div>
-            <div class='form-check'>
-              <input
-                class='form-check-input'
-                type='radio'
-                value='custom'
-                onChange={(e) => setuserGender(e.target.value)}
-                name='flexRadioDefault'
-                id='flexRadioDefault1'
-              ></input>
-              <label class='form-check-label' for='flexRadioDefault1'>
-                Custom
-              </label>
             </div>
           </div>
         </div>

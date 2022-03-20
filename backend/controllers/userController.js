@@ -25,7 +25,6 @@ const addUser = (req, res) => {
       } else {
         db.query(sqlInsert, [Name, EmailID, Password], (err, result) => {
           if (err) {
-            console.log('err ')
           }
           res.status(401).json({
             message: 'User Successfully Signed Up!',
@@ -37,10 +36,10 @@ const addUser = (req, res) => {
     throw new Error('Internal Server Error')
   }
 }
+
 const test = (req, res) => {
   const EmailID = req.body.userEmailID
   const Password = req.body.userPassword
-  //const Hashedpassword = crypto.createHash('sha256').update(password).digest('base64')
   const sqlSearch = 'SELECT * FROM user WHERE userEmailID = ? '
   db.query(sqlSearch, [EmailID], (err, result) => {
     if (err) {
@@ -49,8 +48,6 @@ const test = (req, res) => {
       })
     }
     if (Array.isArray(result) && result.length === 1) {
-      //console.log(result[0].password+"|"+Hashedpassword)
-      console.log(result)
       if (result[0].userPassword === Password) {
         res.json({
           _id: result[0].userID,
@@ -89,8 +86,6 @@ const getUserProfile = async (req, res) => {
           throw new Error(err)
         }
         if (result.length === 1) {
-          // console.log('This is from userController.js')
-          // console.log(result[0])
           res.json({
             _id: result[0].userID,
             userName: result[0].userName,
@@ -127,8 +122,6 @@ const updateUserProfile = async (req, res) => {
 
         let sql =
           'UPDATE `user` SET \
-          `userName`= ? ,\
-          `userEmailID`= ? ,\
           `userPhoneNumber` = ? ,\
           `userDateOfBirth` = ? ,\
           `userCountry` = ?,\
@@ -136,13 +129,10 @@ const updateUserProfile = async (req, res) => {
           `userZipCode`= ?,\
           `userAbout`= ?,\
           `userStreet`= ?,\
-          `userGender`= ?,\
           `userImage`= ?\
-          WHERE (`userID` =20)'
+          WHERE (`userID` = ?)'
 
         let paramsArray = [
-          req.body.userName,
-          req.body.userEmailID,
           req.body.userPhoneNumber,
           req.body.userDOB,
           req.body.userCountry,
@@ -150,7 +140,6 @@ const updateUserProfile = async (req, res) => {
           req.body.userZipCode,
           req.body.userAbout,
           req.body.userStreet,
-          req.body.userGender,
           req.body.imageUrl,
           req.userId,
         ]
@@ -158,7 +147,8 @@ const updateUserProfile = async (req, res) => {
           if (err) {
             console.log(err)
             res.status(500).json({
-              message: ' Internal Server Error. Please Try again Later.',
+              message:
+                'Cannot update As the Email ID or Username Already exits',
             })
           } else {
             res.json({
@@ -179,4 +169,55 @@ const updateUserProfile = async (req, res) => {
   }
 }
 
-module.exports = { addUser, test, getUserProfile, updateUserProfile }
+const addFavourite = async (req, res) => {
+  const userID = req.params.user_id
+  const prodID = req.params.prod_id
+  if (req.userAuth) {
+    let sql =
+      'INSERT INTO `favourites` (`user_id`, `product_id`) VALUES (?, ?);'
+    db.query(sql, [userID, prodID], (err, result) => {
+      if (err) {
+        res.status(500).json({
+          message: 'Internal Server Error',
+        })
+      } else {
+        //console.log(result[0])
+        res.status(200).json({
+          message: 'success',
+        })
+      }
+    })
+  } else {
+    res.status(401)
+    throw new Error('Error 401 - Not Authorized')
+  }
+}
+
+const getUserFavourites = async (req, res) => {
+  if (req.userAuth) {
+    let sql = 'SELECT * FROM `favourites` WHERE user_id = ?;'
+    db.query(sql, [req.params.cust_id], (err, result) => {
+      if (err) {
+        res.status(500).json({
+          message: 'Internal Server Error',
+        })
+      } else {
+        res.status(200).json({
+          result,
+        })
+      }
+    })
+  } else {
+    res.status(401)
+    throw new Error('Error 401 - Not Authorized')
+  }
+}
+
+module.exports = {
+  addUser,
+  test,
+  getUserProfile,
+  updateUserProfile,
+  addFavourite,
+  getUserFavourites,
+}

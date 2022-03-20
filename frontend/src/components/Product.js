@@ -1,15 +1,40 @@
-import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
+import React, { Component, useState, useEffect } from 'react'
+import { Link, Navigate } from 'react-router-dom'
 import { Card } from 'react-bootstrap'
+import { useDispatch, useSelector } from 'react-redux'
+import { LinkContainer } from 'react-router-bootstrap'
+import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap'
+import { addFavourites } from '../actions/userActions'
 
 const Product = ({ product }) => {
-  console.log(product)
+  const userLogin = useSelector((state) => state.userLogin)
+
+  const { userInfo } = userLogin
+  const [favourite, setFavourite] = useState(false)
+  const [favourites, setFavourites] = useState([])
+  const dispatch = useDispatch()
+
+  const editFavourite = (rest_id) => {
+    dispatch(addFavourites(rest_id))
+  }
+
   return (
     <Card className='my-3 p-3 rounded'>
       <Link to={`/product/${product.productID}`}>
         <Card.Img variant='top' src={product.productImage} />
       </Link>
+
       <Card.Body>
+        <div className='row'>
+          <p
+            className='col-md-2'
+            style={{ color: 'green', cursor: 'pointer' }}
+            onClick={() => editFavourite(product.productID)}
+          >
+            <i class='fa-solid fa-heart fa-2xl'></i>
+          </p>
+        </div>
+
         <Link to={`/product/${product.productID}`}>
           <Card.Title as='div'>
             <strong>{product.productName}</strong>

@@ -7,10 +7,14 @@ const {
   test,
   getUserProfile,
   updateUserProfile,
+  addFavourite,
+  getUserFavourites,
 } = require('../controllers/userController')
 
 router.post('/UserSignup', addUser)
 router.post('/UserLogin', test)
+router.route('/addfavourite/:user_id/:prod_id').get(protect, addFavourite)
+router.route('/getFauvourites/:cust_id/').get(protect, getUserFavourites)
 router
   .route('/profile')
   .get(protect, getUserProfile)
