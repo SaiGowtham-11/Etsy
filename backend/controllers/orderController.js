@@ -91,6 +91,7 @@ const addOrder = async (req, res) => {
     })
   })
 }
+// Console.log()
 const getordersByCustomerID = async (req, res) => {
   let sql = "SELECT * FROM `order` WHERE user_userID ='" + req.params.id + "'"
   db.query(sql, async (err, result) => {
@@ -112,6 +113,20 @@ const getordersByOrderID = async (req, res) => {
   db.query(sql, (err, result) => {
     if (err) {
       console.log('Error in getordersByOrderID')
+      res.status(500).json({
+        error: '500 - internal Server error' + err,
+      })
+    } else {
+      res.status(201).json({
+        result: result,
+      })
+    }
+  })
+}
+const getordersBy = async (req, res) => {
+  let sql = "SELECT * FROM `order` WHERE user_userID ='" + req.params.id + "'"
+  db.query(sql, async (err, result) => {
+    if (err) {
       res.status(500).json({
         error: '500 - internal Server error' + err,
       })
