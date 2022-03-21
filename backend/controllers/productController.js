@@ -73,13 +73,14 @@ const getSpecificProduct = (req, res) => {
 }
 
 const addProduct = (req, res) => {
+  console.log(req.body)
   const productName = req.body.productName
   const productImage = req.body.productImage
   const productCategory = req.body.productCategory
   const productDescription = req.body.productDescription
   const productQuantity = req.body.productQuantity
   const productPrice = req.body.productPrice
-  const shopId = req.body.shopId
+  const shopId = req.body.shopID
 
   const sqlInsert =
     'INSERT INTO products (productName, productImage, productCategory, productDescription, productQuantity, productPrice, shopID) VALUES (?, ?, ?, ?, ?, ?, ?)'
@@ -111,4 +112,27 @@ const addProduct = (req, res) => {
   }
 }
 
-module.exports = { getProducts, getSpecificProduct, addProduct }
+const getProductsbyShopID = (req, res) => {
+  const shopId = req.params.shopID
+  const sqlSearch = 'SELECT * FROM products where shopID = ?'
+  try {
+    db.query(sqlSearch, [shopId], (err, result) => {
+      if (err) {
+        console.log(err)
+      } else {
+        res.status(201).json({
+          result,
+        })
+      }
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+module.exports = {
+  getProducts,
+  getSpecificProduct,
+  addProduct,
+  getProductsbyShopID,
+}

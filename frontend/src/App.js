@@ -12,6 +12,7 @@ import ShippingScreen from './screens/ShippingScreen'
 import MyOrders from './screens/MyOrders'
 import MyFav from './screens/MyFav'
 import ShopAvailableScreen from './screens/ShopAvailableScreen'
+import ShopProfileScreen from './screens/ShopProfileScreen'
 
 const App = () => {
   return (
@@ -34,6 +35,7 @@ const App = () => {
             <Route path='/myOrders' element={<MyOrders />} />
             <Route path='/favourites' element={<MyFav />} />
             <Route path='/shop' element={<ShopAvailableScreen />} />
+            <Route path='/shopProfile' element={<ShopProfileScreen />} />
           </Routes>
         </Container>
       </main>

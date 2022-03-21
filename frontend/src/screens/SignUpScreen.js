@@ -67,7 +67,7 @@ const SignUpScreen = () => {
         <div className='col-md-6'>
           <form className='form-center' onSubmit={submitHandler}>
             <div className='form-group'>
-              {message && <Message variant='danger'> {message}</Message>}
+              {message && <Message variant='success'> {message}</Message>}
               {error && <Message variant='danger'> {error}</Message>}
               <input
                 type='userName'

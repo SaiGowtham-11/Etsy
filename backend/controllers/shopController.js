@@ -33,7 +33,9 @@ const addShop = (req, res) => {
   const shopName = req.body.shopName
   const shopImage = req.body.shopImage
   const userId = req.body.userId
-
+  console.log(shopName)
+  console.log(shopImage)
+  console.log(userId)
   const sqlInsert =
     'INSERT INTO shops (shopName, shopImage, user_userID) VALUES (?, ?, ?)'
 
@@ -52,4 +54,21 @@ const addShop = (req, res) => {
   }
 }
 
-module.exports = { checkShopName, addShop }
+const getShopDetails = (req, res) => {
+  const userId = req.params.userId
+  const sqlSearch = 'SELECT * FROM shops WHERE (user_userID = ?)'
+
+  try {
+    db.query(sqlSearch, [userId], (err, result) => {
+      if (err) {
+        console.log(err)
+      } else {
+        res.status(200).json(result[0])
+      }
+    })
+  } catch (error) {
+    throw new Error('Internal Server Error')
+  }
+}
+
+module.exports = { checkShopName, addShop, getShopDetails }

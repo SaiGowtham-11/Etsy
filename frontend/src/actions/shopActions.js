@@ -6,6 +6,9 @@ import {
   CREATE_SHOP_REQUEST,
   CREATE_SHOP_SUCCESS,
   CREATE_SHOP_FAIL,
+  SHOP_DETAILS_FAIL,
+  SHOP_DETAILS_REQUEST,
+  SHOP_DETAILS_SUCCESS,
 } from '../constants/shopConstants'
 
 export const shopNameAvailableAction = (shopName) => async (dispatch) => {
@@ -74,3 +77,26 @@ export const createShopAction =
       })
     }
   }
+
+export const shopDetailsAction = (userId) => async (dispatch) => {
+  try {
+    dispatch({
+      type: SHOP_DETAILS_REQUEST,
+    })
+
+    const { data } = await axios.get(`/api/shops/shopDetails/${userId}`)
+
+    dispatch({
+      type: SHOP_DETAILS_SUCCESS,
+      payload: data,
+    })
+  } catch (error) {
+    dispatch({
+      type: SHOP_DETAILS_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    })
+  }
+}

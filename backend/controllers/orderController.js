@@ -5,7 +5,6 @@ const { errorMonitor } = require('stream')
 
 const addOrder = async (req, res) => {
   let { user_id, orderDate, orderStatus, items_array, orderTotal } = req.body
-  console.log(orderTotal)
   /* Delete this if fails ****/
   if (!req.userAuth) {
     res.status(404).json({
@@ -26,7 +25,7 @@ const addOrder = async (req, res) => {
       }
       let sql1 =
         'INSERT INTO `order` \
-          (`orderDate`, `orderStatus`, `orderTotal`, `user_id`) VALUES \
+          (`orderDate`, `orderStatus`, `orderTotal`, `user_userID`) VALUES \
           (?,?, ?, ?)'
       const Queryparams1 = [orderDate, orderStatus, orderTotal, user_id]
       db.query(sql1, Queryparams1, (err) => {
@@ -93,7 +92,7 @@ const addOrder = async (req, res) => {
   })
 }
 const getordersByCustomerID = async (req, res) => {
-  let sql = "SELECT * FROM `order` WHERE user_id ='" + req.params.id + "'"
+  let sql = "SELECT * FROM `order` WHERE user_userID ='" + req.params.id + "'"
   db.query(sql, async (err, result) => {
     if (err) {
       res.status(500).json({

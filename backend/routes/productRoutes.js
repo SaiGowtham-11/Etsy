@@ -6,7 +6,10 @@ const {
   getProducts,
   getSpecificProduct,
   addProduct,
+  getProductsbyShopID,
 } = require('../controllers/productController')
+
+router.get('/getProductsbyShopID/:shopID', getProductsbyShopID)
 
 router.get('/', getProducts)
 
