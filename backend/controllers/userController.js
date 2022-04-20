@@ -1,7 +1,40 @@
 const generateToken = require('../utils/generateToken.js')
 
+const User = require('../models/userModel')
+
 const db = require('../dbCon')
 const mysql = require('mysql')
+
+const registerUser = async (req, res) => {
+  try {
+    const userName = req.body.userName
+    const userEmailID = req.body.userEmailID
+    const userPassword = req.body.userPassword
+
+    const userExists = await User.findOne({ userEmailID: userEmailID })
+
+    if (userExists) {
+      res.status(401).json({
+        message: 'User already exists',
+      })
+    } else {
+      const newUser = {
+        userName: userName,
+        userEmailID: userEmailID,
+        userPassword: userPassword,
+      }
+      const user = await User.create(newUser)
+      if (user) {
+        res.status(201).json({
+          message: 'User Created Successfully!!',
+        })
+      }
+    }
+  } catch (error) {
+    console.log(error)
+    throw new Error('Internal Server Error')
+  }
+}
 
 const addUser = (req, res) => {
   const Name = req.body.userName
@@ -37,74 +70,119 @@ const addUser = (req, res) => {
   }
 }
 
-const test = (req, res) => {
-  const EmailID = req.body.userEmailID
-  const Password = req.body.userPassword
-  const sqlSearch = 'SELECT * FROM user WHERE userEmailID = ? '
-  db.query(sqlSearch, [EmailID], (err, result) => {
-    if (err) {
-      res.status(400).json({
-        message: err,
+const test = async (req, res) => {
+  const userEmailID = req.body.userEmailID
+  const userPassword = req.body.userPassword
+  const user = await User.findOne({ userEmailID: userEmailID })
+
+  try {
+    if (user && (await user.matchPassword(userPassword))) {
+      res.json({
+        _id: user.userID,
+        userName: user.userName,
+        userEmailID: user.userEmailID,
+        userStreet: user.userStreet,
+        userCity: user.userCity,
+        userCountry: user.userCountry,
+        userZipCode: user.userZipCode,
+        userImage: user.userImage,
+        token: generateToken(user.userID),
       })
-    }
-    if (Array.isArray(result) && result.length === 1) {
-      if (result[0].userPassword === Password) {
-        res.json({
-          _id: result[0].userID,
-          userName: result[0].userName,
-          userEmailID: result[0].userEmailID,
-          //phone: result[0].phone,
-          userStreet: result[0].userStreet,
-          userCity: result[0].userCity,
-          //State: result[0].State,
-          userCountry: result[0].userCountry,
-          userZipCode: result[0].userZipCode,
-          userImage: result[0].userImage,
-          token: generateToken(result[0].userID),
-        })
-      } else {
-        res.status(401).json({
-          message:
-            "Email Id/ Password doesn't match. Please try again.,password does not match",
-        })
-      }
     } else {
       res.status(400).json({
-        message: "Email Id/ Password doesn't match. Please try again.",
+        error: "Invalid username/Password'",
       })
     }
-  })
+  } catch (error) {
+    res.status(400).json({
+      error: "Invalid username/Password'",
+    })
+  }
+
+  // db.query(sqlSearch, [EmailID], (err, result) => {
+  //   if (err) {
+  //     res.status(400).json({
+  //       message: err,
+  //     })
+  //   }
+  //   if (Array.isArray(result) && result.length === 1) {
+  //     if (result[0].userPassword === Password) {
+  //       res.json({
+  //         _id: result[0].userID,
+  //         userName: result[0].userName,
+  //         userEmailID: result[0].userEmailID,
+  //         //phone: result[0].phone,
+  //         userStreet: result[0].userStreet,
+  //         userCity: result[0].userCity,
+  //         //State: result[0].State,
+  //         userCountry: result[0].userCountry,
+  //         userZipCode: result[0].userZipCode,
+  //         userImage: result[0].userImage,
+  //         token: generateToken(result[0].userID),
+  //       })
+  //     } else {
+  //       res.status(401).json({
+  //         message:
+  //           "Email Id/ Password doesn't match. Please try again.,password does not match",
+  //       })
+  //     }
+  //   } else {
+  //     res.status(400).json({
+  //       message: "Email Id/ Password doesn't match. Please try again.",
+  //     })
+  //   }
+  // })
 }
 
 const getUserProfile = async (req, res) => {
-  if (req.userAuth) {
-    db.query(
-      'SELECT * FROM user WHERE userID =?',
-      [req.userId],
-      (err, result) => {
-        if (err) {
-          throw new Error(err)
-        }
-        if (result.length === 1) {
-          res.json({
-            _id: result[0].userID,
-            userName: result[0].userName,
-            userEmailID: result[0].userEmailID,
-            userPhoneNumber: result[0].userPhoneNumber,
-            userStreet: result[0].userStreet,
-            userCity: result[0].userCity,
-            userCountry: result[0].userCountry,
-            userZipCode: result[0].userZipCode,
-            userDateOfBirth: result[0].userDateOfBirth,
-            userImage: result[0].userImage,
-            userAbout: result[0].userAbout,
-          })
-        } else {
-          res.status(401)
-          throw new Error('Error 401 - Not Authorized')
-        }
-      }
-    )
+  // if (req.userAuth) {
+  //   db.query(
+  //     'SELECT * FROM user WHERE userID =?',
+  //     [req.userId],
+  //     (err, result) => {
+  //       if (err) {
+  //         throw new Error(err)
+  //       }
+  //       if (result.length === 1) {
+  //         res.json({
+  //           _id: result[0].userID,
+  //           userName: result[0].userName,
+  //           userEmailID: result[0].userEmailID,
+  //           userPhoneNumber: result[0].userPhoneNumber,
+  //           userStreet: result[0].userStreet,
+  //           userCity: result[0].userCity,
+  //           userCountry: result[0].userCountry,
+  //           userZipCode: result[0].userZipCode,
+  //           userDateOfBirth: result[0].userDateOfBirth,
+  //           userImage: result[0].userImage,
+  //           userAbout: result[0].userAbout,
+  //         })
+  //       } else {
+  //         res.status(401)
+  //         throw new Error('Error 401 - Not Authorized')
+  //       }
+  //     }
+  //   )
+  // }
+
+  const user = await User.findById(req.params.cust_id)
+  if (user) {
+    res.json({
+      _id: user._id,
+      userEmailID: user.userEmailID,
+      userName: user.userName,
+      userPhoneNumber: user.userPhoneNumber,
+      userStreet: user.userStreet,
+      userCity: user.userCity,
+      userCountry: user.userCountry,
+      userZipCode: user.userZipCode,
+      userDateOfBirth: user.userDateOfBirth,
+      userImage: user.userImage,
+      userAbout: user.userAbout,
+    })
+  } else {
+    res.status('404')
+    throw new Error('user Not Found. Please try again')
   }
 }
 
@@ -220,4 +298,5 @@ module.exports = {
   updateUserProfile,
   addFavourite,
   getUserFavourites,
+  registerUser,
 }

@@ -9,15 +9,18 @@ const {
   updateUserProfile,
   addFavourite,
   getUserFavourites,
+  registerUser,
 } = require('../controllers/userController')
 
-router.post('/UserSignup', addUser)
+router.post('/UserSignup', registerUser)
 router.post('/UserLogin', test)
 router.route('/addfavourite/:user_id/:prod_id').get(protect, addFavourite)
 router.route('/getFauvourites/:cust_id/').get(protect, getUserFavourites)
-router
-  .route('/profile')
-  .get(protect, getUserProfile)
-  .put(protect, updateUserProfile)
+router.route('/profile/:cust_id').get(getUserProfile)
+
+// router
+//   .route('/profile')
+//   .get(protect, getUserProfile)
+//   .put(protect, updateUserProfile)
 
 module.exports = router
