@@ -83,7 +83,7 @@ const MyOrders = () => {
   }
   const getOrders = async () => {
     if (userInfo) {
-      const cust_id = userInfo._id
+      const cust_id = userInfo.user_ID
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -95,7 +95,8 @@ const MyOrders = () => {
         `/api/orders/getOrderByCustomer/${cust_id}`,
         config
       )
-      setMyOrders(data.result)
+      console.log(data)
+      setMyOrders(data)
     }
   }
 
@@ -111,11 +112,11 @@ const MyOrders = () => {
                   className='col-md-3'
                   style={{ textTransform: 'capitalize' }}
                 >
-                  {x.orderID}
+                  {x._id}
                 </div>
 
                 <div className='col-md-3'>
-                  ${x.orderTotal} <br />
+                  ${x.totalPrice} <br />
                   <p
                     style={{ textDecoration: 'underline', cursor: 'pointer' }}
                     onClick={() => showModal(x)}
@@ -124,7 +125,6 @@ const MyOrders = () => {
                     View Order Details
                   </p>
                 </div>
-                <div className='col-md-3'>{x.orderStatus}</div>
               </div>
               <hr></hr>
             </>

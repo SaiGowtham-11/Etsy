@@ -9,12 +9,12 @@ const {
   getProductsbyShopID,
 } = require('../controllers/productController')
 
-router.get('/getProductsbyShopID/:shopID', getProductsbyShopID)
+router.get('/getProductsbyShopID/:shopID', getProductsbyShopID) //Done
 
-router.get('/', getProducts)
+router.get('/', getProducts) // Done
 
-router.get('/:id', getSpecificProduct)
+router.get('/:id', getSpecificProduct) // done
 
-router.post('/addProduct', addProduct)
+router.post('/addProduct', addProduct) // done
 
 module.exports = router

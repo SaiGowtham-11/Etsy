@@ -2,126 +2,58 @@ const crypto = require('crypto')
 const generateToken = require('../utils/generateToken')
 const db = require('../dbCon')
 const { errorMonitor } = require('stream')
+const Order = require('../models/orderModel')
 
 const addOrder = async (req, res) => {
-  let { user_id, orderDate, orderStatus, items_array, orderTotal } = req.body
-  /* Delete this if fails ****/
-  if (!req.userAuth) {
-    res.status(404).json({
-      message: ' Not Authorized',
+  const { items_array, user_id, orderTotal } = req.body
+  if (items_array && items_array.length === 0) {
+    res.status(400)
+    throw new Error('No order items')
+    return
+  } else {
+    const order = new Order({
+      user: user_id,
+      orderItems: items_array,
+      totalPrice: orderTotal,
     })
+    const createdOrder = await Order.create(order)
+    console.log('Order Created Successfully..:)')
+    res.status(201).json(createdOrder)
   }
-  db.commit((err) => {
-    if (err) {
-      res.status(500).json({
-        message: ' Internal Server Error',
-      })
-    }
-    db.beginTransaction((err) => {
-      if (err) {
-        res.status(500).json({
-          message: ' Internal Server Error',
-        })
-      }
-      let sql1 =
-        'INSERT INTO `order` \
-          (`orderDate`, `orderStatus`, `orderTotal`, `user_userID`) VALUES \
-          (?,?, ?, ?)'
-      const Queryparams1 = [orderDate, orderStatus, orderTotal, user_id]
-      db.query(sql1, Queryparams1, (err) => {
-        if (err) {
-          res.status(500).json({
-            message: ' Internal Server Error',
-          })
-        }
-
-        db.query('SELECT LAST_INSERT_ID() as last_id', (err, result) => {
-          if (err) {
-            res.status(500).json({
-              message: ' Internal Server Error',
-            })
-          }
-          var last_id = result[0].last_id
-          let errorFlag = false
-          for (let i = 0; i < items_array.length; i++) {
-            let sql =
-              'INSERT INTO `order_details` \
-                                                  ( `order_orderID`,\
-                                                      `products_productID`, \
-                                                  `order_price`,\
-                                                  `order_quantity`\
-                                                    ) \
-                                                  VALUES \
-                                                  (\
-                                                  ?, \
-                                                  ?, \
-                                                  ?, \
-                                                  ? );'
-            const Queryparams = [
-              last_id,
-              items_array[i].product,
-              items_array[i].price,
-              items_array[i].qty,
-            ]
-            db.query(sql, Queryparams, (err, result) => {
-              //console.log(Queryparams)
-              if (err) {
-                console.log(err)
-                db.rollback((err) => {
-                  errorFlag = true
-                })
-                return
-              }
-              //console.log(result)
-            })
-          }
-          if (!errorFlag) {
-            db.commit()
-            //db.end()
-            res.status(200).json({
-              message: 'Success',
-            })
-          } else {
-            res.status(500).json({
-              message: 'Internal Server Error',
-            })
-          }
-        })
-      })
-    })
-  })
 }
-// Console.log()
+
 const getordersByCustomerID = async (req, res) => {
-  let sql = "SELECT * FROM `order` WHERE user_userID ='" + req.params.id + "'"
-  db.query(sql, async (err, result) => {
-    if (err) {
-      res.status(500).json({
-        error: '500 - internal Server error' + err,
-      })
+  const userID = req.params.id
+
+  const orders = await Order.find({ user: userID })
+  try {
+    if (orders) {
+      res.status(200).json(orders)
     } else {
       res.status(201).json({
-        result: result,
+        message: 'No orders Available',
       })
     }
-  })
+  } catch (error) {
+    throw new Error('Internal Server Error')
+  }
 }
 
 const getordersByOrderID = async (req, res) => {
-  let sql =
-    "SELECT * FROM `order_details` WHERE order_orderID ='" + req.params.id + "'"
-  db.query(sql, (err, result) => {
-    if (err) {
-      console.log('Error in getordersByOrderID')
-      res.status(500).json({
-        error: '500 - internal Server error' + err,
-      })
+  const orderID = req.params.id
+
+  const orders = await Order.findOne({ _id: orderID })
+  try {
+    if (orders) {
+      res.status(200).json(orders)
     } else {
       res.status(201).json({
-        result: result,
+        message: 'No orders Available',
       })
     }
-  })
+  } catch (error) {
+    throw new Error('Internal Server Error')
+  }
 }
 const getordersBy = async (req, res) => {
   let sql = "SELECT * FROM `order` WHERE user_userID ='" + req.params.id + "'"

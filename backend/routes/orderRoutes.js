@@ -8,7 +8,7 @@ const {
   getordersByOrderID,
 } = require('../controllers/orderController.js')
 
-router.route('/add').post(protect, addOrder)
-router.route('/getOrderByCustomer/:id').get(protect, getordersByCustomerID)
-router.route('/getOrderDetailsByOrderID/:id').get(protect, getordersByOrderID)
+router.route('/add').post(addOrder)
+router.route('/getOrderByCustomer/:id').get(getordersByCustomerID)
+router.route('/getOrderDetailsByOrderID/:id').get(getordersByOrderID)
 module.exports = router

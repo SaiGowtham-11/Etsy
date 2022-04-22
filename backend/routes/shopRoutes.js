@@ -6,8 +6,8 @@ const {
   getShopDetails,
 } = require('../controllers/shopController')
 
-router.post('/checkShop', checkShopName)
-router.post('/addShop', addShop)
-router.get('/shopDetails/:userId', getShopDetails)
+router.post('/checkShop', checkShopName) //Done
+router.post('/addShop', addShop) //Done
+router.get('/shopDetails/:userId', getShopDetails) //Done
 
 module.exports = router

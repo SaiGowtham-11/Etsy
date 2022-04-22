@@ -9,17 +9,10 @@ const productRoutes = require('./Routes/productRoutes')
 const orderRoutes = require('./Routes/orderRoutes')
 const shopRoutes = require('./Routes/shopRoutes')
 dotenv.config()
+db()
 
 const app = express()
 app.use(express.json())
-
-db.connect((err) => {
-  if (err) {
-    console.error(err.stack)
-    return
-  }
-  console.log('Connected to DB' + db.threadId)
-})
 
 app.use(cors())
 

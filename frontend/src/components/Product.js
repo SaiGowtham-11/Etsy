@@ -20,8 +20,8 @@ const Product = ({ product }) => {
 
   return (
     <Card className='my-3 p-3 rounded'>
-      <Link to={`/product/${product.productID}`}>
-        <Card.Img variant='top' src={product.productImage} />
+      <Link to={`/product/${product._id}`}>
+        <Card.Img variant='top' src={product.image} />
       </Link>
 
       <Card.Body>
@@ -29,15 +29,15 @@ const Product = ({ product }) => {
           <p
             className='col-md-2'
             style={{ color: 'green', cursor: 'pointer' }}
-            onClick={() => editFavourite(product.productID)}
+            onClick={() => editFavourite(product._id)}
           >
             <i class='fa-solid fa-heart fa-2xl'></i>
           </p>
         </div>
 
-        <Link to={`/product/${product.productID}`}>
+        <Link to={`/product/${product._id}`}>
           <Card.Title as='div'>
-            <strong>{product.productName}</strong>
+            <strong>{product.name}</strong>
           </Card.Title>
         </Link>
       </Card.Body>

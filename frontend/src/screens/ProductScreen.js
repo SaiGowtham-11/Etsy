@@ -47,8 +47,8 @@ const ProductScreen = () => {
         <Row>
           <Col md={6}>
             <Image
-              src={product.productImage}
-              alt={product.productName}
+              src={product.image}
+              alt={product.name}
               width='640'
               height='510'
             />
@@ -62,23 +62,23 @@ const ProductScreen = () => {
               </ListGroupItem>
               <ListGroupItem>Sales Count</ListGroupItem>
               <ListGroupItem>
-                <h3>{product.productName}</h3>
+                <h3>{product.name}</h3>
               </ListGroupItem>
               <ListGroupItem>
                 <Row>
                   <Col>
-                    <h3>{product.productPrice}</h3>
+                    <h3>{product.price}</h3>
                   </Col>
                   <Col>
-                    {product.productQuantity > 0 ? 'In Stock' : 'Out Of Stock'}
+                    {product.countInStock > 0 ? 'In Stock' : 'Out Of Stock'}
                   </Col>
                 </Row>
               </ListGroupItem>
 
               <ListGroupItem>
-                <h6>{product.productDescription}</h6>
+                <h6>{product.description}</h6>
               </ListGroupItem>
-              {product.productQuantity > 0 && (
+              {product.countInStock > 0 && (
                 <ListGroupItem>
                   <Row>
                     <Col>Qty</Col>
@@ -88,7 +88,7 @@ const ProductScreen = () => {
                         value={qty}
                         onChange={(e) => setQty(e.target.value)}
                       >
-                        {[...Array(product.productQuantity).keys()].map((x) => (
+                        {[...Array(product.countInStock).keys()].map((x) => (
                           <option key={x + 1} value={x + 1}>
                             {x + 1}
                           </option>
@@ -103,7 +103,7 @@ const ProductScreen = () => {
                   onClick={addToCartHandler}
                   className='btn-block productScreenButtons'
                   type='button'
-                  disabled={product.productQuantity === 0}
+                  disabled={product.countInStock === 0}
                 >
                   Add to cart
                 </Button>

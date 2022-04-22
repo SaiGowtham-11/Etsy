@@ -6,6 +6,7 @@ import {
 import axios from 'axios'
 
 export const createOrder = (order) => async (dispatch, getState) => {
+  console.log('In Order Actions')
   try {
     dispatch({
       type: ORDER_CREATE_REQUEST,
@@ -20,6 +21,7 @@ export const createOrder = (order) => async (dispatch, getState) => {
       },
     }
     const { data } = await axios.post(`/api/orders/add`, order, config)
+
     dispatch({
       type: ORDER_CREATE_SUCCESS,
       payload: data,
