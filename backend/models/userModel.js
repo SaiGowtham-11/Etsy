@@ -3,8 +3,8 @@ const Schema = mongoose.Schema
 
 const userSchema = new Schema(
   {
-    userName: { type: String, reqired: true },
-    userEmailID: { type: String, reqired: true, unique: true },
+    userName: { type: String, required: true },
+    userEmailID: { type: String, required: true, unique: true },
     userImage: { type: String },
     userDateOfBirth: { type: Date },
     userCity: {

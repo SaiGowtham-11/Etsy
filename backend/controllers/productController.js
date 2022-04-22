@@ -1,78 +1,42 @@
 const db = require('../dbCon')
 const mysql = require('mysql')
+const Product = require('../models/productModel')
 
-const getProducts = (req, res) => {
-  const keyword = req.query.keyword
-  if (keyword === 'frame') {
-    const sqlSearch =
-      'SELECT * FROM products WHERE productName = "Glass photo frame"'
-    try {
-      db.query(sqlSearch, (err, result) => {
-        if (err) {
-          res.status(500).json({
-            message: 'Internal Server Error',
-          })
-        }
-        if (Array.isArray(result) && result.length !== 0) {
-          res.json({
-            result,
-          })
-        } else {
-          res.json({
-            message: 'No Products Available',
-          })
-        }
-      })
-    } catch (error) {}
-  } else {
-    const sqlSearch = 'SELECT * FROM products'
-    try {
-      db.query(sqlSearch, (err, result) => {
-        if (err) {
-          res.status(500).json({
-            message: 'Internal Server Error',
-          })
-        }
-        if (Array.isArray(result) && result.length !== 0) {
-          res.json({
-            result,
-          })
-        } else {
-          res.json({
-            message: 'No Products Available',
-          })
-        }
-      })
-    } catch (error) {}
-  }
-}
-
-const getSpecificProduct = (req, res) => {
-  const productID = req.params.id
-  const sqlSearch = 'SELECT * FROM products where productID = ?'
+const getProducts = async (req, res) => {
   try {
-    db.query(sqlSearch, [productID], (err, result) => {
-      if (err) {
-        res.status(500).json({
-          message: 'Internal Server Error',
-        })
-      }
-      if (result.length !== 0) {
-        res.json({
-          result,
-        })
-      } else {
-        res.json({
-          message: 'No Products Available',
-        })
-      }
-    })
-  } catch (error) {
-    console.log(error)
+    const products = await Product.find({})
+    if (products) {
+      res.json({
+        products,
+      })
+    } else {
+      res.json({
+        message: 'No Products Available',
+      })
+    }
+  } catch (err) {
+    console.log(err)
   }
 }
 
-const addProduct = (req, res) => {
+const getSpecificProduct = async (req, res) => {
+  const productID = req.params.id
+
+  const product = await Product.findOne({ _id: productID })
+  try {
+    if (product) {
+      res.status(200).json(product)
+    } else {
+      res.status(201).json({
+        message: 'No Products Available',
+      })
+    }
+  } catch (error) {
+    throw new Error('Internal Server Error')
+  }
+}
+
+const addProduct = async (req, res) => {
   console.log(req.body)
   const productName = req.body.productName
   const productImage = req.body.productImage
@@ -81,50 +45,43 @@ const addProduct = (req, res) => {
   const productQuantity = req.body.productQuantity
   const productPrice = req.body.productPrice
   const shopId = req.body.shopID
-
-  const sqlInsert =
-    'INSERT INTO products (productName, productImage, productCategory, productDescription, productQuantity, productPrice, shopID) VALUES (?, ?, ?, ?, ?, ?, ?)'
-
   try {
-    db.query(
-      sqlInsert,
-      [
-        productName,
-        productImage,
-        productCategory,
-        productDescription,
-        productQuantity,
-        productPrice,
-        shopId,
-      ],
-      (err, result) => {
-        if (err) {
-          console.log(err)
-        } else {
-          res.status(201).json({
-            message: 'Product Added Successfully',
-          })
-        }
-      }
-    )
+    const product = new Product({
+      name: productName,
+      image: productImage,
+      category: productCategory,
+      description: productDescription,
+      countInStock: productQuantity,
+      price: productPrice,
+      shop: shopId,
+    })
+
+    const createdProduct = await Product.create(product)
+    if (createdProduct) {
+      res.status(201).json({
+        message: 'Product Added Successfully',
+      })
+    } else {
+      res.status(400).json({
+        message: 'Product Not Added Successfully',
+      })
+    }
   } catch (error) {
     console.log(error)
   }
 }
 
-const getProductsbyShopID = (req, res) => {
+const getProductsbyShopID = async (req, res) => {
   const shopId = req.params.shopID
-  const sqlSearch = 'SELECT * FROM products where shopID = ?'
+
+  const products = await Product.find({ shop: shopId })
+
   try {
-    db.query(sqlSearch, [shopId], (err, result) => {
-      if (err) {
-        console.log(err)
-      } else {
-        res.status(201).json({
-          result,
-        })
-      }
-    })
+    if (products) {
+      res.status(201).json({
+        products,
+      })
+    }
   } catch (error) {
     console.log(error)
   }

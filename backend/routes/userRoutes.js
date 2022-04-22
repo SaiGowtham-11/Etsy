@@ -12,15 +12,11 @@ const {
   registerUser,
 } = require('../controllers/userController')
 
-router.post('/UserSignup', registerUser)
-router.post('/UserLogin', test)
+router.post('/UserSignup', registerUser) //Done
+router.post('/UserLogin', test) // Done
 router.route('/addfavourite/:user_id/:prod_id').get(protect, addFavourite)
 router.route('/getFauvourites/:cust_id/').get(protect, getUserFavourites)
-router.route('/profile/:cust_id').get(getUserProfile)
-
-// router
-//   .route('/profile')
-//   .get(protect, getUserProfile)
-//   .put(protect, updateUserProfile)
+router.route('/profile/:cust_id').get(getUserProfile) // Here we have to change the code here for Protect
+router.route('/profile').put(updateUserProfile) // Tested and working
 
 module.exports = router

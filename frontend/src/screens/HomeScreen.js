@@ -11,14 +11,14 @@ import { useParams } from 'react-router-dom'
 
 const HomeScreen = () => {
   const params = useParams()
-  const keyword = params.keyword
   const dispatch = useDispatch()
 
   const productList = useSelector((state) => state.productList)
   const { loading, error, products } = productList
   useEffect(() => {
-    dispatch(listProducts(keyword))
-  }, [dispatch, keyword])
+    dispatch(listProducts())
+  }, [dispatch])
+
   return (
     <>
       <h1>Latest Products</h1>

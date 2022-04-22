@@ -76,17 +76,13 @@ const test = async (req, res) => {
   const user = await User.findOne({ userEmailID: userEmailID })
 
   try {
-    if (user && (await user.matchPassword(userPassword))) {
+    if (user) {
+      // Here We need to check the Password
       res.json({
         _id: user.userID,
         userName: user.userName,
         userEmailID: user.userEmailID,
-        userStreet: user.userStreet,
-        userCity: user.userCity,
-        userCountry: user.userCountry,
-        userZipCode: user.userZipCode,
-        userImage: user.userImage,
-        token: generateToken(user.userID),
+        user_ID: user._id,
       })
     } else {
       res.status(400).json({
@@ -135,36 +131,6 @@ const test = async (req, res) => {
 }
 
 const getUserProfile = async (req, res) => {
-  // if (req.userAuth) {
-  //   db.query(
-  //     'SELECT * FROM user WHERE userID =?',
-  //     [req.userId],
-  //     (err, result) => {
-  //       if (err) {
-  //         throw new Error(err)
-  //       }
-  //       if (result.length === 1) {
-  //         res.json({
-  //           _id: result[0].userID,
-  //           userName: result[0].userName,
-  //           userEmailID: result[0].userEmailID,
-  //           userPhoneNumber: result[0].userPhoneNumber,
-  //           userStreet: result[0].userStreet,
-  //           userCity: result[0].userCity,
-  //           userCountry: result[0].userCountry,
-  //           userZipCode: result[0].userZipCode,
-  //           userDateOfBirth: result[0].userDateOfBirth,
-  //           userImage: result[0].userImage,
-  //           userAbout: result[0].userAbout,
-  //         })
-  //       } else {
-  //         res.status(401)
-  //         throw new Error('Error 401 - Not Authorized')
-  //       }
-  //     }
-  //   )
-  // }
-
   const user = await User.findById(req.params.cust_id)
   if (user) {
     res.json({
@@ -187,63 +153,44 @@ const getUserProfile = async (req, res) => {
 }
 
 const updateUserProfile = async (req, res) => {
-  if (req.userAuth) {
-    db.query(
-      'SELECT * FROM user WHERE userID =?',
-      [req.userId],
-      (err, result) => {
-        if (err) {
-          res.status(500).json({
-            message: ' Internal Server Error',
-          })
-        }
+  const {
+    id,
+    userName,
+    email,
+    phone,
+    password,
+    Street,
+    City,
+    Country,
+    ZipCode,
+    image,
+  } = req.body
 
-        let sql =
-          'UPDATE `user` SET \
-          `userPhoneNumber` = ? ,\
-          `userDateOfBirth` = ? ,\
-          `userCountry` = ?,\
-          `userCity` = ?,\
-          `userZipCode`= ?,\
-          `userAbout`= ?,\
-          `userStreet`= ?,\
-          `userImage`= ?\
-          WHERE (`userID` = ?)'
+  const user = await User.findById(id)
+  if (user) {
+    user.userName = userName || user.userName
+    user.userEmailID = email || user.userEmailID
+    user.userPhoneNumber = phone || user.userPhoneNumber
+    user.userStreet = Street || user.userStreet
+    user.userCity = City || user.userCity
+    user.userCountry = Country || user.userCountry
+    user.userZipCode = ZipCode || user.userZipCode
+    user.userImage = image || user.userImage
 
-        let paramsArray = [
-          req.body.userPhoneNumber,
-          req.body.userDOB,
-          req.body.userCountry,
-          req.body.userCity,
-          req.body.userZipCode,
-          req.body.userAbout,
-          req.body.userStreet,
-          req.body.imageUrl,
-          req.userId,
-        ]
-        db.query(sql, paramsArray, (err, result) => {
-          if (err) {
-            console.log(err)
-            res.status(500).json({
-              message:
-                'Cannot update As the Email ID or Username Already exits',
-            })
-          } else {
-            res.json({
-              _id: req.userID,
-              userName: req.body.userName,
-              userEmailID: req.body.userEmailID,
-              userPhoneNumber: req.body.userPhoneNumber,
-              token: generateToken(req.userId),
-            })
-          }
-        })
-      }
-    )
-  } else {
-    res.status(401).json({
-      message: ' User Not Found!',
+    const updatedUser = await user.save()
+    res.json({
+      id: id,
+      userName: updatedUser.userName,
+      userEmailID: updatedUser.userEmailID,
+      userPhoneNumber: updatedUser.userPhoneNumber,
+      userStreet: updatedUser.userStreet,
+      userCity: updatedUser.userCity,
+      userCountry: updatedUser.userCountry,
+      userZipCode: updatedUser.userZipCode,
+      favourites: updatedUser.favourites,
     })
+  } else {
+    res.status(400).send('User does not Exist!')
   }
 }
 

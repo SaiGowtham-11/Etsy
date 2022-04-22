@@ -53,26 +53,17 @@ const CartScreen = () => {
 
   const checkoutHandler = () => {
     if (userInfo) {
-      if (
-        userInfo.userStreet === null ||
-        userInfo.userCity === null ||
-        userInfo.userCountry === null ||
-        userInfo.userZipCode === null
-      ) {
-        navigate('/profile')
-      } else {
-        dispatch(
-          createOrder({
-            items_array: cart.cartItems,
-            orderTotal: cart.totalPrice,
-            orderStatus: 'Success',
-            user_id: userInfo._id,
-            orderDate: Date.now(),
-          })
-        )
-        localStorage.removeItem('cartItems')
-        navigate('/myOrders')
-      }
+      dispatch(
+        createOrder({
+          items_array: cart.cartItems,
+          orderTotal: cart.totalPrice,
+          orderStatus: 'Success',
+          user_id: userInfo.user_ID,
+          orderDate: Date.now(),
+        })
+      )
+      localStorage.removeItem('cartItems')
+      navigate('/myOrders')
     } else {
       navigate('/login')
     }
