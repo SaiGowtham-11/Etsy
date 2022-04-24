@@ -1,5 +1,5 @@
 const generateToken = require('../utils/generateToken.js')
-
+const kafka = require('../kafka/client')
 const User = require('../models/userModel')
 
 const db = require('../dbCon')
@@ -79,37 +79,18 @@ const addUser = (req, res) => {
 }
 
 const test = async (req, res) => {
-  const userEmailID = req.body.userEmailID
-  const userPassword = req.body.userPassword
-  const user = await User.findOne({ userEmailID: userEmailID })
 
-  try {
-    if (user) {
-      // Here We need to check the Password
-      res.json({
-        _id: user.userID,
-        userName: user.userName,
-        userEmailID: user.userEmailID,
-        user_ID: user._id,
-        userPhoneNumber: '',
-        userStreet: '',
-        userCity: '',
-        userCountry: '',
-        userZipCode: '',
-        userDateOfBirth: '',
-        userImage: '',
-        userAbout: '',
-      })
-    } else {
-      res.status(400).json({
-        error: "Invalid username/Password'",
+  kafka.make_request('etsy_login', req.body, (err, results) => {
+    if(err){
+      res.status(500).json({
+        error: err
       })
     }
-  } catch (error) {
-    res.status(400).json({
-      error: "Invalid username/Password'",
-    })
-  }
+    else{
+      res.status(200).send(results)
+    }
+  })
+
 }
 
 const getUserProfile = async (req, res) => {
