@@ -12,22 +12,24 @@ import {
   PRODUCT_LIST_SUCCESS,
 } from '../constants/productConstants'
 
-export const listProducts = () => async (dispatch) => {
-  try {
-    dispatch({ type: PRODUCT_LIST_REQUEST })
-    const res = await axios.get(`/api/products`)
-    dispatch({
-      type: PRODUCT_LIST_SUCCESS,
-      payload: res.data.products,
-    })
-  } catch (error) {
-    // Need to change
-    dispatch({
-      type: PRODUCT_LIST_FAIL,
-      payload: error.message,
-    })
+export const listProducts =
+  (keyword = '') =>
+  async (dispatch) => {
+    try {
+      dispatch({ type: PRODUCT_LIST_REQUEST })
+      const res = await axios.get(`/api/products?Keyword=${keyword}`)
+      dispatch({
+        type: PRODUCT_LIST_SUCCESS,
+        payload: res.data.products,
+      })
+    } catch (error) {
+      // Need to change
+      dispatch({
+        type: PRODUCT_LIST_FAIL,
+        payload: error.message,
+      })
+    }
   }
-}
 
 export const listProductDetails = (id) => async (dispatch) => {
   try {

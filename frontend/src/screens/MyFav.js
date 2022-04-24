@@ -23,22 +23,23 @@ const MyFav = () => {
   const productList = useSelector((state) => state.productList)
   const all_productsList = productList.products
   let modified_order_details = []
-  if (favouritesFromState.result && favouritesFromState.result.length !== 0) {
-    let result_temp = favouritesFromState.result
-    for (let i = 0; i < result_temp.length; i++) {
-      const prod_id = result_temp[i].product_id
-      console.log(all_productsList)
-      var result = all_productsList.find((obj) => {
-        return obj.productID === prod_id
-      })
-      const modified_order_details_obj = {
-        prod_id,
-        //shopID: result.shopID,
-        productName: result.productName,
-        productImage: result.productImage,
-      }
-      modified_order_details.push(modified_order_details_obj)
+  if (favouritesFromState.result && favouritesFromState.length !== 0) {
+    let result_temp = favouritesFromState
+
+    const prod_id = result_temp.result[0]
+    console.log(prod_id)
+    var result = all_productsList.find((obj) => {
+      return obj._id === prod_id
+    })
+    const modified_order_details_obj = {
+      prod_id,
+      //shopID: result.shopID,
+      productName: result.name,
+      productImage: result.image,
     }
+    modified_order_details.push(modified_order_details_obj)
+
+    console.log(modified_order_details)
   }
   useEffect(() => {
     if (!userInfo) {

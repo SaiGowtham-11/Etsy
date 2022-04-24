@@ -4,8 +4,6 @@ const mysql = require('mysql')
 const Shop = require('../models/shopModel')
 const checkShopName = async (req, res) => {
   const shopName = req.body.shopName
-  const sqlSearch =
-    'SELECT COUNT(shopName) AS shopCount FROM shops WHERE (shopName = ?)'
 
   try {
     const shopExists = await Shop.findOne({ shopName: shopName })

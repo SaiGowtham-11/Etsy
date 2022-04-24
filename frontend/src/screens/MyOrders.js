@@ -10,7 +10,8 @@ import { listProducts } from '../actions/productActions'
 import { BiZoomIn } from 'react-icons/bi'
 import { Modal, Button } from 'react-bootstrap'
 const MyOrders = () => {
-  const [myOrders, setMyOrders] = useState([])
+  //const [myOrders, setMyOrders] = useState([])
+  const [orders, setMyOrders] = useState([])
   const [modalShow, setModalShow] = useState(false)
   const [orderData, setOrderData] = useState([])
   const navigate = useNavigate()
@@ -29,7 +30,7 @@ const MyOrders = () => {
     }
     getOrders()
     dispatch(listProducts())
-  }, [navigate, userInfo, redirect])
+  }, [navigate, userInfo, redirect, dispatch])
 
   const showModal = async (x) => {
     const config = {
@@ -40,34 +41,34 @@ const MyOrders = () => {
     }
 
     const { data: orderDetails } = await axios.get(
-      `/api/orders/getOrderDetailsByOrderID/${x.orderID}`,
+      `/api/orders/getOrderDetailsByOrderID/${x._id}`,
       config
     )
 
     let dataObj = {
-      order_id: x.orderID,
-      cust_id: x.user_id,
-      order_date: x.orderDate,
-      order_status: x.orderStatus,
-      order_total: x.orderTotal,
-      order_details: orderDetails.result,
+      order_id: orderDetails._id,
+      cust_id: orderDetails.user,
+      order_date: orderDetails.createdAt,
+      order_status: 'Success',
+      order_total: orderDetails.totalPrice,
+      order_details: orderDetails.orderItems,
     }
     const modified_order_details = []
 
-    for (let i = 0; i < orderDetails.result.length; i++) {
+    for (let i = 0; i < orderDetails.orderItems.length; i++) {
       //console.log(orderDetails.result[i])
-      const prod_id = orderDetails.result[i].products_productID
+      const prod_id = orderDetails.orderItems[i].product
       var result = all_productsList.find((obj) => {
-        return obj.productID === prod_id
+        return obj._id === prod_id
       })
       //console.log(result)
       const modified_order_details_obj = {
         prod_id,
-        prod_qty: orderDetails.result[i].order_quantity,
-        prod_price: orderDetails.result[i].order_price,
-        shopID: result.shopID,
-        productName: result.productName,
-        productImage: result.productImage,
+        prod_qty: orderDetails.orderItems[i].qty,
+        prod_price: orderDetails.orderItems[i].price,
+        shopID: orderDetails.orderItems[i]._id,
+        productName: orderDetails.orderItems[i].name,
+        productImage: orderDetails.orderItems[i].image,
       }
       modified_order_details.push(modified_order_details_obj)
     }
@@ -83,7 +84,7 @@ const MyOrders = () => {
   }
   const getOrders = async () => {
     if (userInfo) {
-      const cust_id = userInfo.user_ID
+      const userId = userInfo.user_ID
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -92,20 +93,21 @@ const MyOrders = () => {
       }
 
       const { data } = await axios.get(
-        `/api/orders/getOrderByCustomer/${cust_id}`,
+        `/api/orders/getOrderByCustomer/${userId}`,
         config
       )
       console.log(data)
       setMyOrders(data)
+      console.log(orders.length)
     }
   }
 
   return (
     <div className='container' style={{ marginTop: '5%', marginBottom: '5%' }}>
-      {myOrders.length > 0 ? (
+      {orders.length > 0 ? (
         <div>
           <h2>My Purchases</h2>
-          {myOrders.map((x) => (
+          {orders.map((x) => (
             <>
               <div className='row'>
                 <div

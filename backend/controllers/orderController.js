@@ -3,6 +3,7 @@ const generateToken = require('../utils/generateToken')
 const db = require('../dbCon')
 const { errorMonitor } = require('stream')
 const Order = require('../models/orderModel')
+const console = require('console')
 
 const addOrder = async (req, res) => {
   const { items_array, user_id, orderTotal } = req.body

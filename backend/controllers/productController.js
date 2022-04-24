@@ -3,8 +3,17 @@ const mysql = require('mysql')
 const Product = require('../models/productModel')
 
 const getProducts = async (req, res) => {
+  console.log(req.query)
+  const keyword = req.query.Keyword
+    ? {
+        name: {
+          $regex: req.query.Keyword,
+          $options: 'i',
+        },
+      }
+    : {}
   try {
-    const products = await Product.find({})
+    const products = await Product.find({ ...keyword })
     if (products) {
       res.json({
         products,
