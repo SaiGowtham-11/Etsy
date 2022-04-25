@@ -1,5 +1,5 @@
 const generateToken = require('../utils/generateToken.js')
-
+const kafka = require('../kafka/client')
 const User = require('../models/userModel')
 
 const db = require('../dbCon')
@@ -22,6 +22,14 @@ const registerUser = async (req, res) => {
         userName: userName,
         userEmailID: userEmailID,
         userPassword: userPassword,
+        userPhoneNumber: '',
+        userStreet: '',
+        userCity: '',
+        userCountry: '',
+        userZipCode: '',
+        userDateOfBirth: '',
+        userImage: '',
+        userAbout: '',
       }
       const user = await User.create(newUser)
       if (user) {
@@ -71,71 +79,27 @@ const addUser = (req, res) => {
 }
 
 const test = async (req, res) => {
-  const userEmailID = req.body.userEmailID
-  const userPassword = req.body.userPassword
-  const user = await User.findOne({ userEmailID: userEmailID })
 
-  try {
-    if (user) {
-      // Here We need to check the Password
-      res.json({
-        _id: user.userID,
-        userName: user.userName,
-        userEmailID: user.userEmailID,
-        user_ID: user._id,
-      })
-    } else {
-      res.status(400).json({
-        error: "Invalid username/Password'",
+  kafka.make_request('etsy_login', req.body, (err, results) => {
+    if(err){
+      res.status(500).json({
+        error: err
       })
     }
-  } catch (error) {
-    res.status(400).json({
-      error: "Invalid username/Password'",
-    })
-  }
+    else{
+      res.status(200).send(results)
+    }
+  })
 
-  // db.query(sqlSearch, [EmailID], (err, result) => {
-  //   if (err) {
-  //     res.status(400).json({
-  //       message: err,
-  //     })
-  //   }
-  //   if (Array.isArray(result) && result.length === 1) {
-  //     if (result[0].userPassword === Password) {
-  //       res.json({
-  //         _id: result[0].userID,
-  //         userName: result[0].userName,
-  //         userEmailID: result[0].userEmailID,
-  //         //phone: result[0].phone,
-  //         userStreet: result[0].userStreet,
-  //         userCity: result[0].userCity,
-  //         //State: result[0].State,
-  //         userCountry: result[0].userCountry,
-  //         userZipCode: result[0].userZipCode,
-  //         userImage: result[0].userImage,
-  //         token: generateToken(result[0].userID),
-  //       })
-  //     } else {
-  //       res.status(401).json({
-  //         message:
-  //           "Email Id/ Password doesn't match. Please try again.,password does not match",
-  //       })
-  //     }
-  //   } else {
-  //     res.status(400).json({
-  //       message: "Email Id/ Password doesn't match. Please try again.",
-  //     })
-  //   }
-  // })
 }
 
 const getUserProfile = async (req, res) => {
+  console.log(req.params.cust_id)
   const user = await User.findById(req.params.cust_id)
   if (user) {
     res.json({
       _id: user._id,
-      userEmailID: user.userEmailID,
+      userEmailID: user.emailId,
       userName: user.userName,
       userPhoneNumber: user.userPhoneNumber,
       userStreet: user.userStreet,
@@ -154,32 +118,32 @@ const getUserProfile = async (req, res) => {
 
 const updateUserProfile = async (req, res) => {
   const {
-    id,
+    user_ID,
     userName,
-    email,
-    phone,
+    userEmailID,
+    userPhoneNumber,
     password,
-    Street,
-    City,
-    Country,
-    ZipCode,
-    image,
+    userStreet,
+    userCity,
+    userCountry,
+    userZipCode,
+    imageUrl,
   } = req.body
-
-  const user = await User.findById(id)
+  console.log(req.body)
+  const user = await User.findById(user_ID)
   if (user) {
     user.userName = userName || user.userName
-    user.userEmailID = email || user.userEmailID
-    user.userPhoneNumber = phone || user.userPhoneNumber
-    user.userStreet = Street || user.userStreet
-    user.userCity = City || user.userCity
-    user.userCountry = Country || user.userCountry
-    user.userZipCode = ZipCode || user.userZipCode
-    user.userImage = image || user.userImage
+    user.userEmailID = userEmailID || user.userEmailID
+    user.userPhoneNumber = userPhoneNumber || user.userPhoneNumber
+    user.userStreet = userStreet || user.userStreet
+    user.userCity = userCity || user.userCity
+    user.userCountry = userCountry || user.userCountry
+    user.userZipCode = userZipCode || user.userZipCode
+    user.userImage = imageUrl || user.userImage
 
     const updatedUser = await user.save()
     res.json({
-      id: id,
+      id: user_ID,
       userName: updatedUser.userName,
       userEmailID: updatedUser.userEmailID,
       userPhoneNumber: updatedUser.userPhoneNumber,
@@ -195,46 +159,60 @@ const updateUserProfile = async (req, res) => {
 }
 
 const addFavourite = async (req, res) => {
-  const userID = req.params.user_id
-  const prodID = req.params.prod_id
-  if (req.userAuth) {
-    let sql =
-      'INSERT INTO `favourites` (`user_id`, `product_id`) VALUES (?, ?);'
-    db.query(sql, [userID, prodID], (err, result) => {
-      if (err) {
-        res.status(500).json({
-          message: 'Internal Server Error',
-        })
-      } else {
-        //console.log(result[0])
-        res.status(200).json({
-          message: 'success',
-        })
-      }
-    })
-  } else {
-    res.status(401)
-    throw new Error('Error 401 - Not Authorized')
-  }
+
+  kafka.make_request('etsy_addfavorites', req.params, (err, result) => {
+    if(err) {
+      res.status(500).json({
+        error: err
+      })
+    }
+    else{
+      res.status(200).json(result)
+    }
+  })
 }
 
+
+
+
+
+
+
+
+//   const userID = req.params.user_id
+//   const prodID = req.params.prod_id
+//   const user = await User.findById(userID)
+//   if (user) {
+//     user.favourites.push(prodID)
+//     console.log(user)
+//     const result = await user.save()
+//     if (result) {
+//       res.status(200).json({
+//         message: 'success',
+//       })
+//     } else {
+//       res.status('500')
+//       throw new Error('Request Failer with status code 500.')
+//     }
+//   } else {
+//     res.status('404')
+//     throw new Error('user Not Found. Please try again')
+//   }
+// }
+
 const getUserFavourites = async (req, res) => {
-  if (req.userAuth) {
-    let sql = 'SELECT * FROM `favourites` WHERE user_id = ?;'
-    db.query(sql, [req.params.cust_id], (err, result) => {
-      if (err) {
-        res.status(500).json({
-          message: 'Internal Server Error',
-        })
-      } else {
-        res.status(200).json({
-          result,
-        })
-      }
-    })
-  } else {
-    res.status(401)
-    throw new Error('Error 401 - Not Authorized')
+  const userID = req.params.cust_id
+  const user = await User.findById(userID)
+  if (user) {
+    const result = user.favourites
+    if (result) {
+      res.status(200).json({
+        result,
+      })
+    } else {
+      res.status('500')
+      throw new Error('Request Failed with status code 500.')
+    }
   }
 }
 

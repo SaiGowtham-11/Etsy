@@ -1,22 +1,23 @@
 const db = require('../dbCon')
 const mysql = require('mysql')
 const Product = require('../models/productModel')
+const kafka = require('../kafka/client')
+
+
 
 const getProducts = async (req, res) => {
-  try {
-    const products = await Product.find({})
-    if (products) {
-      res.json({
-        products,
-      })
-    } else {
-      res.json({
-        message: 'No Products Available',
+  const keyword = req.query.Keyword
+
+  kafka.make_request('etsy_getProducts', req.query, (err,results) => {
+    if(err){
+      res.status(500).json({
+        error : err
       })
     }
-  } catch (err) {
-    console.log(err)
-  }
+    else{
+      res.status(200).json(results)
+    }
+  })
 }
 
 const getSpecificProduct = async (req, res) => {

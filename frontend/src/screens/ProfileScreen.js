@@ -21,7 +21,7 @@ const ProfileScreen = () => {
   const [userZipCode, setUserZipCode] = useState('')
   const [userAbout, setUserAbout] = useState('')
   const [userStreet, setUserStreet] = useState('')
-  const [userGender, setuserGender] = useState('')
+  const [user_ID, setuser_ID] = useState('')
   const [message, setMessage] = useState(null)
   const [userImage, setImage] = useState(null)
   const [imageUrl, setImageUrl] = useState('')
@@ -42,11 +42,11 @@ const ProfileScreen = () => {
     if (!userInfo) {
       navigate('/login')
     } else {
-      if (!user.userEmailID) {
+      if (!user._id) {
         dispatch(getUserDetails('profile'))
       } else {
         setName(user.userName)
-        setEmail(user.userEmailID)
+        setEmail(userInfo.userEmailID)
         setPhoneNumber(user.userPhoneNumber)
         setDOB(user.userDateOfBirth)
         setUserStreet(user.userStreet)
@@ -54,7 +54,6 @@ const ProfileScreen = () => {
         setUserZipCode(user.userZipCode)
         setCity(user.userCity)
         setUserAbout(user.userAbout)
-        setuserGender(user.userGender)
         setImage(user.userImage)
         setImageUrl(user.userImage)
       }
@@ -78,6 +77,7 @@ const ProfileScreen = () => {
   const submitHandler = (e) => {
     e.preventDefault()
     const userobj = {
+      user_ID,
       userName,
       userEmailID,
       userPhoneNumber,

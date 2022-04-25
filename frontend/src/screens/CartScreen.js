@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useParams, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -22,6 +22,7 @@ const CartScreen = () => {
   const { id: productId } = useParams()
   console.log(productId)
   const qty = location.search ? Number(location.search.split('=')[1]) : 1
+  const [userName, setName] = useState('')
   const dispatch = useDispatch()
 
   const cart = useSelector((state) => state.cart)
@@ -55,10 +56,10 @@ const CartScreen = () => {
     if (userInfo) {
       dispatch(
         createOrder({
-          items_array: cart.cartItems,
-          orderTotal: cart.totalPrice,
+          orderItems: cart.cartItems,
+          totalPrice: cart.totalPrice,
           orderStatus: 'Success',
-          user_id: userInfo.user_ID,
+          user: userInfo.user_ID,
           orderDate: Date.now(),
         })
       )
@@ -87,6 +88,17 @@ const CartScreen = () => {
                   </Col>
                   <Col md={3}>
                     <Link to={`/product/{item.product}`}>{item.name}</Link>
+                  </Col>
+                  <Col md={2}></Col>
+                  <Col md={2}>
+                    <input
+                      type='checkbox'
+                      id='vehicle1'
+                      name='vehicle1'
+                      value='Bike'
+                      onChange={(e) => setName(e.target.value)}
+                    ></input>
+                    <label for='vehicle1'>GiftBox</label>
                   </Col>
                   <Col md={2}>{item.price}</Col>
                   <Col md={2}>

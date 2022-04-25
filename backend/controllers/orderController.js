@@ -3,27 +3,40 @@ const generateToken = require('../utils/generateToken')
 const db = require('../dbCon')
 const { errorMonitor } = require('stream')
 const Order = require('../models/orderModel')
+const console = require('console')
+const kafka = require('../kafka/client')
 
 const addOrder = async (req, res) => {
-  const { items_array, user_id, orderTotal } = req.body
-  if (items_array && items_array.length === 0) {
-    res.status(400)
-    throw new Error('No order items')
-    return
-  } else {
-    const order = new Order({
-      user: user_id,
-      orderItems: items_array,
-      totalPrice: orderTotal,
-    })
-    const createdOrder = await Order.create(order)
-    console.log('Order Created Successfully..:)')
-    res.status(201).json(createdOrder)
-  }
+   console.log(req)
+  kafka.make_request('etsy_add_order',req.body, (err, results) => {
+    if(err){
+      res.status(500).json({
+        error: err
+      })
+    }
+    else{
+      res.status(201).send(results)
+    }
+      })
 }
 
 const getordersByCustomerID = async (req, res) => {
+
   const userID = req.params.id
+  const pageSize = req.query.pageSize || 2
+  const page = req.query.page || 1
+
+  /*kafka.make_request('get_user_orders', {pageSize, page, userID}, (err, results) => {
+    if(err){
+      res.status(500).json({
+        error: err
+      })
+    }
+    else{
+      res.status(200).send(results)
+    }
+  })*/
+
 
   const orders = await Order.find({ user: userID })
   try {

@@ -36,6 +36,7 @@ const App = () => {
             <Route path='/favourites' element={<MyFav />} />
             <Route path='/shop' element={<ShopAvailableScreen />} />
             <Route path='/shopProfile' element={<ShopProfileScreen />} />
+            <Route path='/myOrders/:pageNumber' component={MyOrders} exact/>
           </Routes>
         </Container>
       </main>
