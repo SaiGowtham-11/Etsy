@@ -221,6 +221,7 @@ export const getFavourites = () => async (dispatch, getState) => {
       `/api/users/getFauvourites/${userID}`,
       config
     )
+    console.log(data)
     dispatch({
       type: USER_GET_FAV_SUCCESS,
       payload: data,

@@ -56,10 +56,10 @@ const CartScreen = () => {
     if (userInfo) {
       dispatch(
         createOrder({
-          items_array: cart.cartItems,
-          orderTotal: cart.totalPrice,
+          orderItems: cart.cartItems,
+          totalPrice: cart.totalPrice,
           orderStatus: 'Success',
-          user_id: userInfo._id,
+          user: userInfo.user_ID,
           orderDate: Date.now(),
         })
       )

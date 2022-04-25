@@ -159,26 +159,46 @@ const updateUserProfile = async (req, res) => {
 }
 
 const addFavourite = async (req, res) => {
-  const userID = req.params.user_id
-  const prodID = req.params.prod_id
-  const user = await User.findById(userID)
-  if (user) {
-    user.favourites.push(prodID)
-    console.log(user)
-    const result = await user.save()
-    if (result) {
-      res.status(200).json({
-        message: 'success',
+
+  kafka.make_request('etsy_addfavorites', req.params, (err, result) => {
+    if(err) {
+      res.status(500).json({
+        error: err
       })
-    } else {
-      res.status('500')
-      throw new Error('Request Failer with status code 500.')
     }
-  } else {
-    res.status('404')
-    throw new Error('user Not Found. Please try again')
-  }
+    else{
+      res.status(200).json(result)
+    }
+  })
 }
+
+
+
+
+
+
+
+
+//   const userID = req.params.user_id
+//   const prodID = req.params.prod_id
+//   const user = await User.findById(userID)
+//   if (user) {
+//     user.favourites.push(prodID)
+//     console.log(user)
+//     const result = await user.save()
+//     if (result) {
+//       res.status(200).json({
+//         message: 'success',
+//       })
+//     } else {
+//       res.status('500')
+//       throw new Error('Request Failer with status code 500.')
+//     }
+//   } else {
+//     res.status('404')
+//     throw new Error('user Not Found. Please try again')
+//   }
+// }
 
 const getUserFavourites = async (req, res) => {
   const userID = req.params.cust_id

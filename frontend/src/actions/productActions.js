@@ -20,7 +20,7 @@ export const listProducts =
       const res = await axios.get(`/api/products?Keyword=${keyword}`)
       dispatch({
         type: PRODUCT_LIST_SUCCESS,
-        payload: res.data.products,
+        payload: res.data,
       })
     } catch (error) {
       // Need to change

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, {useEffect, useState} from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { Row, Col, ListGroup, Image, Card } from 'react-bootstrap'
@@ -23,6 +23,7 @@ const MyFav = () => {
   const productList = useSelector((state) => state.productList)
   const all_productsList = productList.products
   let modified_order_details = []
+  //const [modified_order_details, set_modified_order_details] = useState([])
   if (favouritesFromState.result && favouritesFromState.length !== 0) {
     let result_temp = favouritesFromState
 
@@ -31,6 +32,7 @@ const MyFav = () => {
     var result = all_productsList.find((obj) => {
       return obj._id === prod_id
     })
+    console.log(result)
     const modified_order_details_obj = {
       prod_id,
       //shopID: result.shopID,
@@ -40,6 +42,7 @@ const MyFav = () => {
     modified_order_details.push(modified_order_details_obj)
 
     console.log(modified_order_details)
+    //set_modified_order_details(modified_order_details)
   }
   useEffect(() => {
     if (!userInfo) {

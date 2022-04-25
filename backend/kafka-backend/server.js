@@ -2,6 +2,10 @@ let connection =  require('./kafka/Connection');
 const db = require('../dbCon')
 
 const userLogin = require('./services/userServices/loginUser')
+const getProduct = require('./services/productservices/getProduct')
+const addfavourite = require('./services/userServices/addFavorite')
+const addOrder = require('./services/orderServices/addOrder')
+const userOrders = require('./services/orderServices/getUserOrders')
 
 db()
 
@@ -39,3 +43,7 @@ function handleTopicRequest(topic_name,fname){
 //second argument is a function that will handle this topic request
 
 handleTopicRequest('etsy_login', userLogin)
+handleTopicRequest('etsy_getProducts', getProduct)
+handleTopicRequest('etsy_addfavorites', addfavourite)
+handleTopicRequest('etsy_add_order',addOrder)
+handleTopicRequest('get_user_orders', userOrders)
