@@ -8,10 +8,20 @@ const userRoutes = require('./Routes/userRoutes')
 const productRoutes = require('./Routes/productRoutes')
 const orderRoutes = require('./Routes/orderRoutes')
 const shopRoutes = require('./Routes/shopRoutes')
+const schema = require('./graphQL/index')
+const { graphqlHTTP } = require('express-graphql')
 dotenv.config()
 db()
 
+
 const app = express()
+
+app.use('/graphql', graphqlHTTP({
+    schema,
+    graphiql: true
+}))
+
+
 app.use(express.json())
 
 app.use(cors())
