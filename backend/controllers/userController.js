@@ -1,5 +1,4 @@
 const generateToken = require('../utils/generateToken.js')
-const kafka = require('../kafka/client')
 const User = require('../models/userModel')
 
 const db = require('../dbCon')
@@ -80,16 +79,39 @@ const addUser = (req, res) => {
 
 const test = async (req, res) => {
 
-  kafka.make_request('etsy_login', req.body, (err, results) => {
-    if(err){
-      res.status(500).json({
-        error: err
-      })
+  const userEmailID = req.body.userEmailID
+  const userPassword = req.body.userPassword
+  const user = await User.findOne({ userEmailID: userEmailID })
+  try {
+    if (user) {
+
+      const result = {
+        _id: user.userID,
+        userName: user.userName,
+        userEmailID: user.userEmailID,
+        user_ID: user._id,
+        userPhoneNumber: '',
+        userStreet: '',
+        userCity: '',
+        userCountry: '',
+        userZipCode: '',
+        userDateOfBirth: '',
+        userImage: '',
+        userAbout: '',
+      }
+      res.status(200).json({results: result})
+    } else {
+      const err = {
+        "error" : "Invalid emailId/password!"
+      }
+      res.status(400).json(err)
     }
-    else{
-      res.status(200).send(results)
+  } catch (error) {
+    const err = {
+      "error" : "Internal Server Error!"
     }
-  })
+    res.status(500).json(err)
+  }
 
 }
 
@@ -160,16 +182,30 @@ const updateUserProfile = async (req, res) => {
 
 const addFavourite = async (req, res) => {
 
-  kafka.make_request('etsy_addfavorites', req.params, (err, result) => {
-    if(err) {
-      res.status(500).json({
-        error: err
-      })
+  try {
+    const userID = req.params.user_id
+    const prodID = req.params.prod_id
+    const user = await User.findById(userID)
+    if (user) {
+      user.favourites.push(prodID)
+      const result = await user.save()
+      if (result) {
+        res.status(200).json({results: result})
+      } else {
+        const err = {
+          "error": "Invalid USERID"
+        }
+        res.status(400).json(err)
+      }
     }
-    else{
-      res.status(200).json(result)
+  } catch (error) {
+    const err = {
+      "error": "Internal Server Error!"
     }
-  })
+    res.status(500).json(err)
+  }
+
+
 }
 
 

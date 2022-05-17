@@ -4,11 +4,11 @@ const router = express.Router()
 const protect = require('../middleware/authMiddleware')
 const {
   addOrder,
-  getordersByCustomerID,
-  getordersByOrderID,
+  getOrdersByCustomerID,
+  getOrdersByOrderID,
 } = require('../controllers/orderController.js')
 
 router.route('/add').post(addOrder)
-router.route('/getOrderByCustomer/:id').get(getordersByCustomerID)
-router.route('/getOrderDetailsByOrderID/:id').get(getordersByOrderID)
+router.route('/getOrderByCustomer/:id').get(getOrdersByCustomerID)
+router.route('/getOrderDetailsByOrderID/:id').get(getOrdersByOrderID)
 module.exports = router

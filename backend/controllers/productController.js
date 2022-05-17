@@ -1,23 +1,32 @@
 const db = require('../dbCon')
 const mysql = require('mysql')
 const Product = require('../models/productModel')
-const kafka = require('../kafka/client')
 
 
 
 const getProducts = async (req, res) => {
-  const keyword = req.query.Keyword
 
-  kafka.make_request('etsy_getProducts', req.query, (err,results) => {
-    if(err){
-      res.status(500).json({
-        error : err
-      })
+  try{
+
+    const products = await Product.find()
+
+    if (products) {
+      res.status(200).json(products)
+    }else {
+
+      const err = {
+        "error" : "No Products Available"
+      }
+      res.status(200).json(err)
     }
-    else{
-      res.status(200).json(results)
+  }catch(error) {
+    const err = {
+      "error" : "Internal Server Error!"
     }
-  })
+    res.status(500).json(err)
+  }
+
+
 }
 
 const getSpecificProduct = async (req, res) => {
