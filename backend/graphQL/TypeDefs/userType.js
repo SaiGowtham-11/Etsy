@@ -16,7 +16,6 @@ const UserType = new GraphQLObjectType({
         userCurrency: { type: GraphQLFloat },
         userPhoneNumber: { type: GraphQLString },
         userGender: { type: GraphQLString },
-        favourites: { type: GraphQLList },
         token: { type: GraphQLString }
     })
 })
